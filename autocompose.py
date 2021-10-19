@@ -6,14 +6,16 @@ from collections import OrderedDict
 def main():
     parser = argparse.ArgumentParser(description='Generate docker-compose yaml definition from running container.')
     parser.add_argument('-v', '--version', type=int, default=3, help='Compose file version (1 or 3)') 
+    parser.add_argument('--set-net-exetern', action="store_true", help='Generate docker-compose.yml with networks.external mapping')
     parser.add_argument('cnames', nargs='*', type=str, help='The name of the container to process.')
+  
     args = parser.parse_args()
 
     struct = {}
     networks = []
     volumes = []
     for cname in args.cnames:
-        cfile, networks, volumes = generate(cname)
+        cfile, networks, volumes = generate(cname,args)
         struct.update(cfile)
 
     render(struct, args, networks,volumes)
@@ -27,7 +29,7 @@ def render(struct, args, networks,volumes):
         pyaml.p(OrderedDict({'version': '"3"', 'services': struct, 'networks': networks, 'volumes':volumes}))
     
 
-def generate(cname):
+def generate(cname,args):
     c = docker.from_env()
 
     try:
@@ -92,7 +94,9 @@ def generate(cname):
         networklist = c.networks.list()
         for network in networklist:
             if network.attrs['Name'] in values['networks']:
-                networks[network.attrs['Name']] = {'external': (not network.attrs['Internal'])}
+                networks[network.attrs['Name']] = {'name': network.attrs['Name']}
+                if args.set_net_extern:
+                    networks[network.attrs['Name']] = {'external': (not network.attrs['Internal'])}
 
 
     volumes = {}
