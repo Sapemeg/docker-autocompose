@@ -102,9 +102,10 @@ def generate(cname):
     else:
         volumelist = c.volumes.list()
         for volume in volumelist:
-            if volume in volumelist:
-                volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
-        
+            for val in values['volumes']:
+                if volume.attrs['Name'] == val.rpartition(':')[0]:
+                    volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
+            
 
 
     # Check for command and add it if present.
