@@ -6,7 +6,7 @@ from collections import OrderedDict
 def main():
     parser = argparse.ArgumentParser(description='Generate docker-compose yaml definition from running container.')
     parser.add_argument('-v', '--version', type=int, default=3, help='Compose file version (1 or 3)') 
-    parser.add_argument('--set-net-exetern', action="store_true", help='Generate docker-compose.yml with networks.external mapping')
+    parser.add_argument('--set-net-extern', action="store_true", help='Generate docker-compose.yml with networks.external mapping')
     parser.add_argument('cnames', nargs='*', type=str, help='The name of the container to process.')
   
     args = parser.parse_args()
