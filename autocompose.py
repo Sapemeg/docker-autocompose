@@ -11,7 +11,7 @@ def main():
     parser.add_argument('cnames', nargs='*', type=str, help='The name of the container to process.')
   
     args = parser.parse_args()
-
+ 
     struct = {}
     networks = []
     volumes = []
@@ -108,7 +108,7 @@ def generate(cname,args):
         volumelist = c.volumes.list()
         for volume in volumelist:
             for val in values['volumes']:
-                if volume.attrs['Name'] == val.rpartition(':')[0]:
+                if volume.attrs['Name'] == val.rsplit(':')[0]:
                     volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
             
 
