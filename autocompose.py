@@ -102,7 +102,8 @@ def generate(cname):
     else:
         volumelist = c.volumes.list()
         for volume in volumelist:
-            volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
+            if volume in volumelist:
+                volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
         
 
 
