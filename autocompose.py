@@ -11,19 +11,20 @@ def main():
 
     struct = {}
     networks = []
+    volumes = []
     for cname in args.cnames:
-        cfile, networks = generate(cname)
+        cfile, networks, volumes = generate(cname)
         struct.update(cfile)
 
-    render(struct, args, networks)
+    render(struct, args, networks,volumes)
 
 
-def render(struct, args, networks):
+def render(struct, args, networks,volumes):
     # Render yaml file
     if args.version == 1:
         pyaml.p(OrderedDict(struct))
     else:
-        pyaml.p(OrderedDict({'version': '"3"', 'services': struct, 'networks': networks}))
+        pyaml.p(OrderedDict({'version': '"3"', 'services': struct, 'networks': networks, 'volumes':volumes}))
     
 
 def generate(cname):
@@ -93,6 +94,18 @@ def generate(cname):
             if network.attrs['Name'] in values['networks']:
                 networks[network.attrs['Name']] = {'external': (not network.attrs['Internal'])}
 
+
+    volumes = {}
+
+    if values["volumes"] == set():
+        del values["volumes"]
+    else:
+        volumelist = c.volumes.list()
+        for volume in volumelist:
+            volumes[volume.attrs['Name']] = {"name": volume.attrs['Name']}
+        
+
+
     # Check for command and add it if present.
     if cattrs['Config']['Cmd'] != None:
         values['command'] = " ".join(cattrs['Config']['Cmd']),
@@ -122,7 +135,9 @@ def generate(cname):
         if (value != None) and (value != "") and (value != []) and (value != 'null') and (value != {}) and (value != "default") and (value != 0) and (value != ",") and (value != "no"):
             ct[key] = value
 
-    return cfile, networks
+
+
+    return cfile, networks,volumes
 
 
 if __name__ == "__main__":
