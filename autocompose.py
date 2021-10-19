@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 
+
+#TODO: remove arguments not used by us, remove entrypoint, remove workingdir, remove tags
+
+
+
 import sys, argparse, pyaml, docker
 from collections import OrderedDict
 
